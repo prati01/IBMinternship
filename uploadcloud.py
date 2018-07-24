@@ -1,10 +1,21 @@
+#!C:/Python27/python.exe
+print("Content-Type: text/html\n")
+print ("Hello Python Web Browser!! This is cool!!")
 import ibm_boto3
 from ibm_botocore.client import Config
-import cgi
+#import cgi
+import cgi, os
+import cgitb; cgitb.enable()
 form = cgi.FieldStorage()
 classname =  form.getvalue('classname')
-uploadedfile = form.getvalue('uploaded_file')
-
+print classname
+uploadedfile = form['uploaded_file']
+print uploadedfile.filename
+if uploadedfile.filename:
+   fn = os.path.basename(uploadedfile.filename)
+   #open('/tmp/' + fn, 'wb').write(uploaded.file.read())
+   message = 'The file "' + fn + '" was uploaded successfully'
+print message
 api_key = '5fCIJmZL3zt2FOsUdQQQUhUTc-L4X2uzIFhwb4dVY7Yo'
 service_instance_id = 'crn:v1:bluemix:public:cloud-object-storage:global:a/61c86e4ba3d34ff19c5d45b1d4d5c6a6:7ea63fd2-4bc5-47af-a9be-415362f996d9::'
 auth_endpoint = 'https://iam.bluemix.net/oidc/token'
@@ -30,5 +41,5 @@ cos = ibm_boto3.resource('s3',
 
 ##for bucket in cos.buckets.all():
 ##        print(bucket.name)
-
-cos.meta.client.upload_file(uploadedfile , 'fooditems32' , classname)
+fn = fn.replace('\\' ,'/' )
+cos.meta.client.upload_file(fn , 'fooditems32' , classname)
